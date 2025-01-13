@@ -4,9 +4,9 @@
             <div class="col-12 col-md-6 offset-md-3">
                 <div class="card shadow sm">
                     <div class="card-body">
-                        <h1 class="text-center">Register</h1>
+                        <h1 class="text-center">Cobrança</h1>
                         <hr/>
-                        <form action="javascript:void(0)" @submit="register" class="row" method="post">
+                        <form @submit.prevent="onSubmit">
                             <div class="col-12" v-if="Object.keys(validationErrors).length > 0">
                                 <div class="alert alert-danger">
                                     <ul class="mb-0">
@@ -14,25 +14,24 @@
                                     </ul>
                                 </div>
                             </div>
-                            
-                            <div class="form-group col-12">
-                                <label for="cliente_id" class="font-weight-bold">Cliente ID</label>
-                                <input type="text" name="cliente_id" v-model="cobranca.cliente_id" id="cliente_id" placeholder="Cliente ID" class="form-control">
-                            </div>
                             <div class="form-group col-12 my-2">
                                 <label for="contrato_id" class="font-weight-bold">Contrato ID</label>
                                 <input type="text" name="contrato_id" v-model="cobranca.contrato_id" id="contrato_id" placeholder="Contrato ID" class="form-control">
                             </div>
                             <div class="form-group col-12 my-2">
-                                <label for="valor" class="font-weight-bold">Contrato ID</label>
+                                <label for="valor" class="font-weight-bold">Valor</label>
                                 <input type="text" name="valor" v-model="cobranca.valor" id="valor" placeholder="Valor" class="form-control">
                             </div>
                             <div class="form-group col-12 my-2">
-                                <label for="multa" class="font-weight-bold">Contrato ID</label>
+                                <label for="multa" class="font-weight-bold">Multa</label>
                                 <input type="text" name="multa" v-model="cobranca.multa" id="multa" placeholder="Multa" class="form-control">
                             </div>
                             <div class="form-group col-12 my-2">
-                                <label for="status" class="font-weight-bold">Contrato ID</label>
+                                <label for="status" class="font-weight-bold">Tipo</label>
+                                <input type="text" name="tipo" v-model="cobranca.tipo" id="tipo" placeholder="Tipo" class="form-control">
+                            </div>                                 
+                            <div class="form-group col-12 my-2">
+                                <label for="status" class="font-weight-bold">Status</label>
                                 <input type="text" name="status" v-model="cobranca.status" id="status" placeholder="Status" class="form-control">
                             </div>                                                                                    
 
@@ -55,36 +54,41 @@ export default {
     data(){
         return {
             cobranca:{
-                name:"",
-                email:"",
-                password:"",
-                password_confirmation:""
             },
             validationErrors:{},
             processing:false
         }
     },
+    mounted(){
+        //this.showCobranca()
+    },    
     methods:{
-        ...mapActions({
-            signIn:'auth/login'
-        }),
-        async register(){
-            this.processing = true
-            await axios.get('/sanctum/csrf-cookie')
-            await axios.post('/register',this.cobranca).then(response=>{
-                this.validationErrors = {}
-                this.signIn()
-            }).catch(({response})=>{
-                if(response.status===422){
-                    this.validationErrors = response.data.errors
-                }else{
-                    this.validationErrors = {}
-                    alert(response.data.message)
-                }
-            }).finally(()=>{
-                this.processing = false
+        async showCobranca(){
+            await this.axios.get(`/api/cobranca/${this.$route.params.id}`).then(response=>{
+                const { title, description } = response.data
+                this.cobranca.title = title
+                this.cobranca.description = description
+            }).catch(error=>{
+                console.log(error)
             })
-        }
+        },
+        async onSubmit() {
+            this.create();
+        },     
+        async create(){
+            await this.axios.post('/api/cobranca',this.cobranca).then(response=>{
+                this.$router.push({name:"cobranca"})
+            }).catch(error=>{
+                console.log(error)
+            })
+        },
+        async update(){
+            await this.axios.post(`/api/cobranca/${this.$route.params.id}`,this.cobranca).then(response=>{
+                this.$router.push({name:"cobrancaList"})
+            }).catch(error=>{
+                console.log(error)
+            })
+        }        
     }
 }
 </script>

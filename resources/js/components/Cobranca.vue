@@ -7,9 +7,11 @@
                         <h1 class="text-center">Cobranca</h1>
                         <hr/>
                         <div class="col-12 mb-2">
-                                <button type="submit" :disabled="processing" class="btn btn-primary btn-block">
-                                    {{ processing ? "Aguarde" : "Nova Cobrança" }}
-                                </button>
+                            <button class="btn btn-primary btn-block" 
+                    onclick="location.href='/cobranca/novo'"
+                    >
+                                    Nova Cobranca
+                                </button>   
                         </div>   
                     </div>
                  
@@ -20,19 +22,19 @@
                         <thead>
                             <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Cliente</th>
+                            <th scope="col">Cobranca</th>
                             <th scope="col">Status</th>
                             <th scope="col">Valor</th>
                             <th scope="col">Multa</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                            <th scope="row">1</th>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <tr  v-for="cobranca in cobrancas" :key="cobranca.id">
+                            <th scope="row"></th>
+                            <td>{{ cobranca.id }}</td>
+                            <td>{{ cobranca.status }}</td>
+                            <td>{{ cobranca.valor }}</td>
+                            <td>{{ cobranca.multa }}</td>
                             </tr>
 
                         </tbody>
@@ -49,36 +51,28 @@ export default {
     data(){
         return {
             cobranca:{
-                name:"",
-                email:"",
-                password:"",
-                password_confirmation:""
             },
+            cobrancas:[],
             validationErrors:{},
             processing:false
         }
     },
     methods:{
-        ...mapActions({
-            signIn:'auth/login'
-        }),
-        async register(){
-            this.processing = true
-            await axios.get('/sanctum/csrf-cookie')
-            await axios.post('/register',this.cobranca).then(response=>{
-                this.validationErrors = {}
-                this.signIn()
-            }).catch(({response})=>{
-                if(response.status===422){
-                    this.validationErrors = response.data.errors
-                }else{
-                    this.validationErrors = {}
-                    alert(response.data.message)
-                }
-            }).finally(()=>{
-                this.processing = false
+        listaCobrancas()
+        {
+            axios
+            .get('api/cobrancas/listar')
+            .then(response => {
+                this.cobrancas = response.data
             })
+            .catch(function (error) {
+                console.log(error);
+            })            
+           
         }
+
+    }, mounted(){
+        this.listaCobrancas()
     }
 }
 </script>

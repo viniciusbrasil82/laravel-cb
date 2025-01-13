@@ -7,11 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cobranca extends Model
 {
+    protected $table = 'cobranca';
     protected $fillable = [
         'tipo',
         'valor',
         'multa',
-        'status',        
+        'status', 
+        'contrato_id'       
     ];
     //$table->int('cliente_id');      
     //$table->int('contrato_id');    

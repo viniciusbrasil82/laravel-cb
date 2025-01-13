@@ -1,5 +1,6 @@
 import { createWebHistory, createRouter } from 'vue-router'
 import store from '@/store'
+
 /* Guest Component */
 const Login = () => import('@/components/Login.vue')
 const Register = () => import('@/components/Register.vue')
@@ -10,7 +11,9 @@ const DashboardLayout = () => import('@/components/layouts/Default.vue')
 /* Authenticated Component */
 const Dashboard = () => import('@/components/Dashboard.vue')
 const Cliente = () => import('@/components/Cliente.vue')
+const ClienteForm = () => import('@/components/ClienteForm.vue')
 const Cobranca = () => import('@/components/Cobranca.vue')
+const CobrancaForm = () => import('@/components/CobrancaForm.vue')
 /* Authenticated Component */
 const routes = [
     {
@@ -55,13 +58,29 @@ const routes = [
                 }
             },
             {
+                name: "cliente_novo",
+                path: '/cliente/novo',
+                component: ClienteForm,
+                meta: {
+                    title: `Cliente Novo`
+                }
+            },                    
+            {
                 name: "cobranca",
                 path: '/cobranca',
                 component: Cobranca,
                 meta: {
                     title: `Cobranca`
                 }
-            }                        
+            },            
+            {
+                name: "cobranca_novo",
+                path: '/cobranca/novo',
+                component: CobrancaForm,
+                meta: {
+                    title: `Cobranca Nova`
+                }
+            }                          
         ]
     }
 ]

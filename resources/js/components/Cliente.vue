@@ -45,16 +45,24 @@
                             <th scope="col">Documento</th>
                             </tr>
                         </thead>
+                        
                         <tbody>
-                            <tr>
-                            <th scope="row">1</th>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <tr  v-for="cliente in clientes" :key="cliente.id">
+                            <th scope="row">{{ cliente.id }}</th>
+                            <td>{{ cliente.nome }}</td>
+                            <td>{{ cliente.status }}</td>
+                            <td>{{ cliente.documento }}</td>
                             </tr>
 
                         </tbody>
                     </table>                    
+                </div>
+                <div>
+                    <button class="btn btn-primary btn-block" 
+                    onclick="location.href='/cliente/novo'"
+                    >
+                                    Novo Cliente
+                                </button>                    
                 </div>
             </div>
         </div>
@@ -67,43 +75,28 @@ export default {
     data(){
         return {
             cliente:{
-                name:"",
-                email:"",
-                password:"",
-                password_confirmation:""
             },
+            clientes:[],
             validationErrors:{},
             processing:false
         }
     },
     methods:{
-        ...mapActions({
-            signIn:'auth/login'
-        }),
-        async register(){
-            this.processing = true
-            await axios.get('/sanctum/csrf-cookie')
-            await axios.post('/register',this.cliente).then(response=>{
-                this.validationErrors = {}
-                this.signIn()
-            }).catch(({response})=>{
-                if(response.status===422){
-                    this.validationErrors = response.data.errors
-                }else{
-                    this.validationErrors = {}
-                    alert(response.data.message)
-                }
-            }).finally(()=>{
-                this.processing = false
-            })
-        },
         listaClientes()
         {
-           let clientes = axios.get('/clientes'); 
+            axios
+            .get('api/clientes/listar')
+            .then(response => {
+                this.clientes = response.data
+            })
+            .catch(function (error) {
+                console.log(error);
+            })            
+           
         }
 
     }, mounted(){
-            ///alert('montou');
+        this.listaClientes()
     }
 }
 </script>

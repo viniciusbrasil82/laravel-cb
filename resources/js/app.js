@@ -3,9 +3,13 @@ import '../sass/app.scss'
 import Router from '@/router'
 import store from '@/store'
 import { createApp } from 'vue/dist/vue.esm-bundler';
+import VueAxios from 'vue-axios';
+import axios from 'axios';
 const app = createApp({})
 app.use(Router)
 app.use(store)
+app.use(VueAxios, axios)
+//app.use(axios);
 app.mount('#app')
 /**
  * First we will load all of this project's JavaScript dependencies which

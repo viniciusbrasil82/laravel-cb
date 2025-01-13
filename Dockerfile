@@ -49,6 +49,7 @@ RUN npm install vue@latest vue-loader@latest
 RUN npm i @vitejs/plugin-vue 
 RUN npm install
 RUN npm install vue-router
+RUN npm install vue-axios --save 
 RUN npm install vuex --save
 RUN npm i vuex-persistedstate    
     

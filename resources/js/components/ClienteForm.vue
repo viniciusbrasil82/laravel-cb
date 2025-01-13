@@ -6,7 +6,7 @@
                     <div class="card-body">
                         <h1 class="text-center">Register</h1>
                         <hr/>
-                        <form action="javascript:void(0)" @submit="register" class="row" method="post">
+                        <form @submit.prevent="onSubmit">
                             <div class="col-12" v-if="Object.keys(validationErrors).length > 0">
                                 <div class="alert alert-danger">
                                     <ul class="mb-0">
@@ -32,6 +32,10 @@
                                 <label for="contato" class="font-weight-bold">Contato</label>
                                 <input type="text" name="contato" v-model="cliente.contato" id="contato" placeholder="Contato" class="form-control">
                             </div>
+                            <div class="form-group col-12 my-2">
+                                <label for="contrato_id" class="font-weight-bold">Contrato (ID)</label>
+                                <input type="text" name="contrato_id" v-model="cliente.contrato_id" id="contrato_id" placeholder="Contrato" class="form-control">
+                            </div>                            
                             <div class="form-group col-12 my-2">
                                 <label for="estrangeiro" class="font-weight-bold">Estrangeiro</label>
                                 <input type="text" name="estrangeiro" v-model="cliente.estrangeiro" id="estrangeiro" placeholder="Estrangeiro" class="form-control">
@@ -59,36 +63,41 @@ export default {
     data(){
         return {
             cliente:{
-                name:"",
-                email:"",
-                password:"",
-                password_confirmation:""
             },
             validationErrors:{},
             processing:false
         }
     },
+    mounted(){
+        //this.showCliente()
+    },    
     methods:{
-        ...mapActions({
-            signIn:'auth/login'
-        }),
-        async register(){
-            this.processing = true
-            await axios.get('/sanctum/csrf-cookie')
-            await axios.post('/register',this.cliente).then(response=>{
-                this.validationErrors = {}
-                this.signIn()
-            }).catch(({response})=>{
-                if(response.status===422){
-                    this.validationErrors = response.data.errors
-                }else{
-                    this.validationErrors = {}
-                    alert(response.data.message)
-                }
-            }).finally(()=>{
-                this.processing = false
+        async showCliente(){
+            await this.axios.get(`/api/cliente/${this.$route.params.id}`).then(response=>{
+                const { title, description } = response.data
+                this.cliente.title = title
+                this.cliente.description = description
+            }).catch(error=>{
+                console.log(error)
             })
-        }
+        },
+        async onSubmit() {
+            this.create();
+        },     
+        async create(){
+            await this.axios.post('/api/cliente',this.cliente).then(response=>{
+                this.$router.push({name:"cliente"})
+            }).catch(error=>{
+                console.log(error)
+            })
+        },
+        async update(){
+            await this.axios.post(`/api/cliente/${this.$route.params.id}`,this.cliente).then(response=>{
+                this.$router.push({name:"clienteList"})
+            }).catch(error=>{
+                console.log(error)
+            })
+        }        
     }
 }
 </script>
